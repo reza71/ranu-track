@@ -11,7 +11,8 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { courier, awb } = req.query;
+  // Menarik data resi, kurir, dan nomor HP (baru)
+  const { courier, awb, number } = req.query;
   // API Key BinderByte Kakak
   const API_KEY = 'f75a8b1cb3fdf220fbcd5a426b5a1e420be8311b6c737af3290b1f940c1a19e9';
 
@@ -21,7 +22,14 @@ export default async function handler(req, res) {
 
   try {
     // Vercel menembak API BinderByte secara aman dari sisi Server
-    const response = await fetch(`https://api.binderbyte.com/v1/track?api_key=${API_KEY}&courier=${courier}&awb=${awb}`);
+    let url = `https://api.binderbyte.com/v1/track?api_key=${API_KEY}&courier=${courier}&awb=${awb}`;
+    
+    // SUNTIKAN BARU: Tambahkan nomor HP jika kurir mewajibkannya (JNE)
+    if (number) {
+      url += `&number=${number}`;
+    }
+
+    const response = await fetch(url);
     const data = await response.json();
     
     // Kembalikan datanya ke Shopify
